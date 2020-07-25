@@ -72,6 +72,7 @@ function buildForm(specs) {
   const formElem = document.createElement("form");
 
   Object.assign(formElem.style, formStyle);
+  formElem.style.gridTemplateColumns = "minmax(0, 1fr) ".repeat(specs.columns);
 
   specs.elements.forEach((elemSpecs) => {
     const posCol =
@@ -131,6 +132,37 @@ const formInfo = {
             padding: ".5em 1em",
           });
           return elem;
+        },
+        fileInput: (elemSpecs, posRow, posCol) => {
+          const div = document.createElement("div");
+          const button = document.createElement("button");
+          const input = document.createElement("input");
+          Object.assign(div.style, {
+            position: "relative",
+            overflow: "hidden",
+          });
+          button.innerHTML = elemSpecs.name;
+          Object.assign(button.style, {
+            gridColumn: posCol,
+            gridRow: posRow,
+            fontSize: ".75em",
+            width: "100%",
+            padding: ".5em",
+          });
+          input.type = "file";
+          input.addEventListener("change", (e) => {
+            log(input.value);
+          });
+          Object.assign(input.style, {
+            fontSize: "100px",
+            position: "absolute",
+            left: 0,
+            top: 0,
+            opacity: 0,
+          });
+          div.appendChild(button);
+          div.appendChild(input);
+          return div;
         },
       },
     },
