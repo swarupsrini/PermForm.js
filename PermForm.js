@@ -17,7 +17,7 @@ log("PermForm.js");
  */
 function initForm(specs) {
   const _self = {};
-  _self.specs = loadSpecs(specs);
+  _self.specs = loadSpecs(specs); // wrap this in a themer
   _self.formElement = buildForm(_self.specs);
 
   /**
@@ -63,16 +63,26 @@ function buildForm(specs) {
   //     grab the template for each item type in specs.elements
   //     set the state to be the grabbed state
   //     also if autosave enabled, make it so that when text changes, update form_store
-  const formElem = document.getElementById(specs.divId);
-  formElem.style.display = "grid";
-  formElem.style.fontSize = specs.fontSize;
-  formElem.style.gridTemplateRows = "auto ".repeat(specs.size[0]);
-  formElem.style.gridTemplateColumns = "auto auto"; // fix this
-  specs.elements.forEach((elem) =>
-    formElem.appendChild(
-      createElement(elem.name, elem.state, elem.position, elem.size)
-    )
-  );
+
+  const theme = formInfo.themes[specs.theme];
+  const formStyle = theme.formStyle;
+  const elements = theme.elements;
+
+  const divElem = document.getElementById(specs.divId);
+  const formElem = document.createElement("form");
+
+  Object.assign(formElem.style, formStyle);
+
+  specs.elements.forEach((elemSpecs) => {
+    const posCol =
+      elemSpecs.position.split(",")[1] + " / span " + elemSpecs.colWidth;
+    const posRow = elemSpecs.position.split(",")[0];
+
+    elemSpecs.type in elements &&
+      formElem.appendChild(elements[elemSpecs.type](elemSpecs, posRow, posCol));
+  });
+
+  divElem.appendChild(formElem);
 
   // attach validators
   //    use global map to store validators for each element type
@@ -87,29 +97,45 @@ function buildForm(specs) {
   // return the form root element inside the div
 }
 
-/**
- * Creates an element based on a template, identified by name.
- * Currently supported elements: textLabel, textInput
- *
- * @param {String} name Name of the element to create.
- * @returns {Element} The created element.
- */
-function createElement(name, state, position, size) {
-  const posCol = position.split(",")[0] + " / span " + size.split(",")[0];
-  const posRow = position.split(",")[1] + " / span " + size.split(",")[1];
-  // if (name === "textLabel") {
-  const elem = document.createElement("p");
-  elem.innerText = state;
-  elem.style.fontSize = "1em";
-  elem.style.gridColumn = posCol;
-  elem.style.gridRow = posRow;
-  return elem;
-  // }
-}
-
 // add event listener, on window closed, save every element in form_store that has autosave on - basically filter and save
 
-// mapping from form element names to the elements themselves
+const formInfo = {
+  themes: {
+    basic: {
+      formStyle: {
+        fontSize: "20px",
+        fontFamily: "Arial",
+        gridColumnGap: "10px",
+        gridRowGap: "20px",
+        display: "grid",
+        padding: "10px",
+      },
+      elements: {
+        textLabel: (elemSpecs, posRow, posCol) => {
+          const elem = document.createElement("label");
+          elem.innerText = elemSpecs.value;
+          Object.assign(elem.style, {
+            gridColumn: posCol,
+            gridRow: posRow,
+            fontSize: "1em",
+          });
+          return elem;
+        },
+        textInput: (elemSpecs, posRow, posCol) => {
+          const elem = document.createElement("input");
+          elem.placeholder = elemSpecs.placeholder;
+          Object.assign(elem.style, {
+            gridColumn: posCol,
+            gridRow: posRow,
+            fontSize: ".75em",
+            padding: ".5em 1em",
+          });
+          return elem;
+        },
+      },
+    },
+  },
+  validators: {},
+};
 
-// mapping from form element names to validator function
 // form elements: labels, text fields, drop-down, check box, radio, slider, date picker
