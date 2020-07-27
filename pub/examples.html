@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>PermForm.js Demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Jquery from a Google CDN.  
+    	 If you don't use either async or defer, the DOM load is blocked until the script is downloaded and executed. -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- 'defer' says that the script should be loaded after the DOM is loaded.
+         If multiple scripts have 'defer', they are loaded one after the other.  -->
+    <!-- 'async' states that it is safe to load the script without blocking 
+          DOM loading.  Note that if multiple scripts are 'async', their order
+          of loading is not guaratneed (don't use async if one script depends
+          on the other). -->
+    <script defer type="text/javascript" src="PermForm.js"></script>
+    <script defer type="text/javascript" src="examples.js"></script>
+  </head>
+  <body>
+    <h1 style="font-family: Arial;">
+      PermForm.js Demo
+    </h1>
+    <p style="font-family: Arial;">
+      Here, we use PermForm.js to create a simple job application. By using
+      PermForm.js, we can create this form with a simple JSON string.</br>
+      The JSON for the form is on the left, and the rendered form is shown on the right.</br>
+      The key features of the form include: 
+      <ol style="font-family: Arial;">
+        <li>Automatic grid alignment (each element is defined using a coordinate system)</li>
+        <li>Auto save (close and reopen this tab, the form will save its state!)</li>
+        <li>Input validation (the phone number field is set to be numeric type, the email is validated to be an email, and all the fields are set to be required).</li>
+      </ol>
+    </p>
+    <div style="display: flex;">
+      <img src="code.png" style="width: 500px;">
+      <div id="formDiv"></div>
+    </div>
+  </body>
+</html>
