@@ -12,7 +12,7 @@ initForm({
       type: "textLabel",
       value: "Welcome to the application!",
       position: "1,1",
-      size: "1,1",
+      size: "1,2",
     },
     {
       type: "textInput",
