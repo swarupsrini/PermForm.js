@@ -205,6 +205,7 @@ const formInfo = {
           div.appendChild(input);
           return div;
         },
+        dropDown: (elemSpecs, state, changeState, posRow, posCol) => {},
         submit: (elemSpecs, state, changeState, posRow, posCol) => {
           const input = document.createElement("input");
           input.type = "submit";
