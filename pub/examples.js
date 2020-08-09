@@ -60,6 +60,20 @@ initForm({
       validator: "pdf",
     },
     {
+      type: "textInput",
+      placeholder: "Is your info correct?",
+      required: true,
+      position: "9,1",
+      size: "1,2",
+    },
+    {
+      type: "dropDown",
+      name: "Choose an option",
+      required: true,
+      position: "10,1",
+      size: "1,2",
+    },
+    {
       type: "submit",
       position: "9,1",
       size: "1,2",

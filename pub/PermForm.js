@@ -1,5 +1,8 @@
 /* PermForm.js Library */
 "use strict";
+
+// const e = require("express");
+
 const log = console.log;
 log("PermForm.js");
 
@@ -51,33 +54,34 @@ function initForm(specs) {
     Object.keys(formStyle).forEach(
       (item) => (formElem.style[item] = formStyle[item])
     );
-    // Object.assign(formElem.style, formStyle);
+
     formElem.style.gridTemplateColumns = "minmax(0, 1fr) ".repeat(
       specs.columns
     );
 
     specs.elements.forEach((elemSpecs, i) => {
-      const posCol =
-        elemSpecs.position.split(",")[1] +
-        " / span " +
-        elemSpecs.size.split(",")[1];
-      const posRow =
-        elemSpecs.position.split(",")[0] +
-        " / span " +
-        elemSpecs.size.split(",")[0];
-      const changeState = (s) => {
+      const setState = (s) => {
         _self.state[i] = s;
       };
-      elemSpecs.type in elements &&
-        formElem.appendChild(
-          elements[elemSpecs.type](
-            elemSpecs,
-            _self.state[i],
-            changeState,
-            posRow,
-            posCol
-          )
+      const height = elemSpecs.size.split(",")[0];
+      if (elemSpecs.type in elements) {
+        log(elements.dropDown);
+        const elem = elements[elemSpecs.type](
+          elemSpecs,
+          _self.state[i],
+          setState,
+          height
         );
+        elem.style.gridColumn =
+          elemSpecs.position.split(",")[1] +
+          " / span " +
+          elemSpecs.size.split(",")[1];
+        elem.style.gridRow =
+          elemSpecs.position.split(",")[0] +
+          " / span " +
+          elemSpecs.size.split(",")[0];
+        formElem.appendChild(elem);
+      }
     });
 
     formElem.addEventListener("submit", (e) => {
@@ -127,17 +131,15 @@ const formInfo = {
         padding: "10px",
       },
       elements: {
-        textLabel: (elemSpecs, state, setState, posRow, posCol) => {
+        textLabel: (elemSpecs, state, setState) => {
           const elem = document.createElement("label");
           elem.innerText = elemSpecs.value;
           Object.assign(elem.style, {
-            gridColumn: posCol,
-            gridRow: posRow,
             fontSize: "1em",
           });
           return elem;
         },
-        textInput: (elemSpecs, state, setState, posRow, posCol) => {
+        textInput: (elemSpecs, state, setState, height) => {
           const elem = document.createElement("textArea");
           elem.placeholder = elemSpecs.placeholder;
           if (state) elem.value = state;
@@ -156,24 +158,20 @@ const formInfo = {
           });
           elem.required = elemSpecs.required;
           Object.assign(elem.style, {
-            gridColumn: posCol,
-            gridRow: posRow,
             fontFamily: "inherit",
             resize: "none",
             fontSize: ".75em",
             padding: ".5em 1em",
-            height: 20 * posRow.slice(-1) + "px",
+            height: 20 * height + "px",
             verticalAlign: "top",
           });
           return elem;
         },
-        fileInput: (elemSpecs, state, setState, posRow, posCol) => {
+        fileInput: (elemSpecs, state, setState, height) => {
           const div = document.createElement("div");
           const button = document.createElement("button");
           const input = document.createElement("input");
           Object.assign(div.style, {
-            gridColumn: posCol,
-            gridRow: posRow,
             position: "relative",
             overflow: "hidden",
           });
@@ -205,13 +203,34 @@ const formInfo = {
           div.appendChild(input);
           return div;
         },
-        dropDown: (elemSpecs, state, changeState, posRow, posCol) => {},
-        submit: (elemSpecs, state, changeState, posRow, posCol) => {
+        dropDown: (elemSpecs, state, changeState, height) => {
+          log("drop");
+          const select = document.createElement("select");
+          const label = document.createElement("option");
+          label.innerHtml = elemSpecs.name;
+          label.disabled = true;
+          label.selected = true;
+          select.appendChild(label);
+          elemSpecs.options.forEach((op) => {
+            const opElem = document.createElement("option");
+            opElem.innerHTML = op;
+            op.value = op;
+          });
+          Object.assign(select.style, {
+            padding: "8x 12px",
+            color: "#333333",
+            backgroundColor: "#eeeeee",
+            border: "1px solid #dddddd",
+            cursor: "pointer",
+            borderRadius: "5px",
+          });
+          log("done");
+          return select;
+        },
+        submit: (elemSpecs, state, changeState, height) => {
           const input = document.createElement("input");
           input.type = "submit";
           Object.assign(input.style, {
-            gridColumn: posCol,
-            gridRow: posRow,
             backgroundColor: "#4CAF50",
             color: "white",
             fontSize: ".75em",
