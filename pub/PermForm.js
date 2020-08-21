@@ -4,102 +4,143 @@
 const log = console.log;
 log("PermForm.js");
 
-/**
- * Initializes the form from specifications.
- * Returns the newly created DOM element.
- *
- * @function
- * @param {Object} specs JSON specificatons for the form to create.
- * @returns {Object} The newly created form object.
- */
-function initForm(specs) {
-  const _self = {};
-  _self.specs = specs;
-  // localStorage.clear(); // TEMP
-  if (
-    specs.autoSave &&
-    localStorage.hasOwnProperty("PermForm-" + specs.divId)
-  ) {
-    _self.state = localStorage.getItem("PermForm-" + specs.divId).split(",");
-    _self.state = JSON.parse(_self.state);
-    _self.state = !Array.isArray(_self.state) ? [] : _self.state;
-  } else {
-    _self.state = [];
+(function (global) {
+  /**
+   * Initializes the form from specifications.
+   * Returns the newly created DOM element.
+   *
+   * @function
+   * @param {Object} specs JSON specificatons for the form to create.
+   * @returns {Object} The newly created form object.
+   */
+  function initForm(specs) {
+    const _self = {};
+    _self.specs = specs;
+    // localStorage.clear(); // TEMP
+    if (
+      specs.autoSave &&
+      localStorage.hasOwnProperty("PermForm-" + specs.divId)
+    ) {
+      _self.state = localStorage.getItem("PermForm-" + specs.divId);
+      _self.state = JSON.parse(_self.state);
+      _self.state = !Array.isArray(_self.state) ? [] : _self.state;
+    } else {
+      _self.state = [];
+    }
+
+    window.addEventListener("beforeunload", (e) => {
+      specs.autoSave &&
+        localStorage.setItem(
+          "PermForm-" + specs.divId,
+          JSON.stringify(_self.state)
+        );
+    });
+
+    /**
+     * Creates a form using specifications. Each element must have a state.
+     *
+     * @param {Object} specs Specifications and settings to create the form.
+     * @returns {Element} The form element.
+     */
+    _self.buildForm = function () {
+      const specs = _self.specs;
+      const theme = formInfo.themes[specs.theme];
+      const formStyle = theme.formStyle;
+      const elements = theme.elements;
+
+      const divElem = document.getElementById(specs.divId);
+      const formElem = document.createElement("form");
+
+      Object.keys(formStyle).forEach(
+        (item) => (formElem.style[item] = formStyle[item])
+      );
+
+      formElem.style.gridTemplateColumns = "1fr ".repeat(specs.columns);
+      formElem.style.gridTemplateRows = "1fr ".repeat(
+        specs.elements.reduce(
+          (acc, cur) => acc + parseInt(cur[0].size.substring(0)),
+          0
+        )
+      );
+
+      specs.elements.forEach((row, x) => {
+        // if row's state array DNE, set it
+        if (!_self.state[x]) _self.state[x] = [];
+        row.forEach((elemSpecs, y) => {
+          // for elements to set their states
+          const setState = (s) => (_self.state[x][y] = s);
+
+          // get the element required
+          if (elemSpecs.type in elements) {
+            const size = elemSpecs.size.split(",");
+            const elem = elements[elemSpecs.type](
+              elemSpecs,
+              _self.state[x][y],
+              setState,
+              size[1]
+            );
+
+            // add positioning
+            elem.style.gridColumn = "span " + size[1];
+            elem.style.gridRow = "span " + size[0];
+
+            // add draggability
+            if (specs.draggable) addDrag(elem);
+
+            formElem.appendChild(elem);
+          }
+        });
+      });
+
+      formElem.addEventListener("submit", (e) => {
+        e.preventDefault();
+        specs.onSubmit(_self.state);
+      });
+
+      divElem.appendChild(formElem);
+    };
+
+    /**
+     * Returns the JS Object version of the form that can be reloaded back to
+     * re-create the form later on.
+     *
+     * @returns {Object} the JS object version of the form.
+     */
+    _self.exportForm = function () {
+      return _self.specs;
+    };
+
+    /**
+     * Returns the current state of all elements on the form.
+     *
+     * @returns {Object} the JS object version of the form.
+     */
+    _self.exportState = function () {
+      return _self.state;
+    };
+
+    return _self;
   }
 
-  window.addEventListener("beforeunload", (e) => {
-    specs.autoSave &&
-      localStorage.setItem(
-        "PermForm-" + specs.divId,
-        JSON.stringify(_self.state)
-      );
-  });
-
-  /**
-   * Creates a form using specifications. Each element must have a state.
-   *
-   * @param {Object} specs Specifications and settings to create the form.
-   * @returns {Element} The form element.
-   */
-  _self.buildForm = function () {
-    const specs = _self.specs;
-    const theme = _self.__formInfo.themes[specs.theme];
-    const formStyle = theme.formStyle;
-    const elements = theme.elements;
-
-    const divElem = document.getElementById(specs.divId);
-    const formElem = document.createElement("form");
-
-    Object.keys(formStyle).forEach(
-      (item) => (formElem.style[item] = formStyle[item])
-    );
-
-    formElem.style.gridTemplateColumns = "1fr ".repeat(specs.columns);
-    formElem.style.gridTemplateRows = "1fr ".repeat(specs.elements.length);
-
-    let extra = 0;
-    specs.elements.forEach((row, x) => {
-      row.forEach((elemSpecs, y) => {
-        const setState = (s) => {
-          _self.state[x][y] = s;
-        };
-        if (!_self.state[x]) _self.state[x] = [];
-        if (elemSpecs.type in elements) {
-          const size = elemSpecs.size.split(",");
-          const elem = elements[elemSpecs.type](
-            elemSpecs,
-            _self.state[x][y],
-            setState,
-            size[1]
-          );
-          elem.style.gridColumn = y + 1 + " / span " + size[1];
-          elem.style.gridRow = x + extra + 1 + "/ span " + size[0];
-          if (size[0] > 1) extra += parseInt(size[0]) - 1;
-          formElem.appendChild(elem);
-        }
-      });
+  const addDrag = (elem) => {
+    elem.draggable = true;
+    // select types don't work with the draggability
+    if (elem.type === "select-one") elem.disabled = true;
+    elem.addEventListener("dragstart", (e) => {
+      elem.className = "dragging";
+      elem.borderTemp = elem.style.border;
+      elem.borderWidthTemp = elem.style.borderWidth;
+      elem.style.border = "3px dotted black";
     });
-
-    formElem.addEventListener("submit", (e) => {
-      e.preventDefault();
-      specs.onSubmit(_self.state);
+    elem.addEventListener("dragover", (e) => {
+      const src = document.querySelector(".dragging");
+      if (elem !== src) elem.parentElement.insertBefore(src, elem);
     });
-
-    divElem.appendChild(formElem);
-  };
-
-  /**
-   * Returns the JS Object version of the form that can be reloaded back to
-   * re-create the form later on.
-   *
-   * @returns {Object} the JS object version of the form.
-   */
-  _self.exportForm = function () {
-    return _self.specs;
-  };
-
-  _self.exportState = function () {
-    return _self.state;
+    elem.addEventListener("dragend", (e) => {
+      elem.classList.remove("dragging");
+      elem.style.border = elem.borderTemp;
+      elem.style.borderWidth = elem.borderWidthTemp;
+    });
   };
 
   /**
@@ -113,7 +154,7 @@ function initForm(specs) {
    *
    * Future elements: check box, radio, slider, date picker
    */
-  _self.__formInfo = {
+  const formInfo = {
     themes: {
       basic: {
         formStyle: {
@@ -133,6 +174,7 @@ function initForm(specs) {
               fontSize: "1em",
               verticalAlign: "bottom",
               alignSelf: "end",
+              boxSizing: "border-box",
             });
             return elem;
           },
@@ -145,8 +187,8 @@ function initForm(specs) {
             elem.addEventListener("input", (e) => {
               setState(elem.value);
               if (
-                elemSpecs.validator in _self.__formInfo.validators &&
-                !_self.__formInfo.validators[elemSpecs.validator](elem.value)
+                elemSpecs.validator in formInfo.validators &&
+                !formInfo.validators[elemSpecs.validator](elem.value)
               ) {
                 elem.style.border = "2px solid red";
                 elem.setCustomValidity("Invalid field.");
@@ -209,6 +251,8 @@ function initForm(specs) {
             Object.assign(input.style, {
               fontSize: "100px",
               position: "absolute",
+              height: "100%",
+              width: "100%",
               left: 0,
               top: 0,
               opacity: 0,
@@ -245,6 +289,7 @@ function initForm(specs) {
               fontSize: ".75em",
               cursor: "pointer",
               borderRadius: "3px",
+              boxSizing: "border-box",
             });
             return select;
           },
@@ -261,6 +306,7 @@ function initForm(specs) {
               border: "3px solid #4CAF50",
               borderRadius: "5px",
               cursor: "pointer",
+              boxSizing: "border-box",
             });
             return input;
           },
@@ -273,5 +319,5 @@ function initForm(specs) {
     },
   };
 
-  return _self;
-}
+  global.initForm = global.initForm || initForm;
+})(window);

@@ -7,6 +7,7 @@ initForm({
   autoSave: true,
   theme: "basic",
   columns: 2,
+  draggable: true,
   elements: [
     [
       {
