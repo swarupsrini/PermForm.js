@@ -1,5 +1,7 @@
 # PermForm.js
 
+https://gentle-tor-17639.herokuapp.com/
+
 ## Getting Started
 
 In this page you will see a short overview to get started with PermForm followed by a detailed API documentation.
@@ -25,3 +27,7 @@ initFormSimple("simple-form", [
   "submit",
 ]).buildForm();
 ```
+
+### Documentation
+
+View the full documentation here: https://gentle-tor-17639.herokuapp.com/docs.html
