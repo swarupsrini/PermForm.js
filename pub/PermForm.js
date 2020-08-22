@@ -5,6 +5,17 @@ const log = console.log;
 log("PermForm.js");
 
 (function (global) {
+  function initFormSimple(divId, elements) {
+    const specs = {
+      divId: divId,
+      autoSave: true,
+      theme: "basic",
+      columns: 1,
+      draggable: true,
+      elements: elements.map((name) => [formInfo.themes.basic.defaults[name]]),
+    };
+    return initForm(specs);
+  }
   /**
    * Initializes the form from specifications.
    * Returns the newly created DOM element.
@@ -77,7 +88,7 @@ log("PermForm.js");
               elemSpecs,
               _self.state[x][y],
               setState,
-              size[1]
+              parseInt(size[1])
             );
 
             // add positioning
@@ -98,6 +109,13 @@ log("PermForm.js");
       });
 
       divElem.appendChild(formElem);
+    };
+
+    _self.rebuildForm = (specs) => {
+      specs.divId = _self.specs.divId;
+      document.getElementById(specs.divId).innerHTML = "";
+      _self.specs = specs;
+      _self.buildForm();
     };
 
     /**
@@ -128,9 +146,8 @@ log("PermForm.js");
     if (elem.type === "select-one") elem.disabled = true;
     elem.addEventListener("dragstart", (e) => {
       elem.className = "dragging";
-      elem.borderTemp = elem.style.border;
-      elem.borderWidthTemp = elem.style.borderWidth;
-      elem.style.border = "3px dotted black";
+      elem.opTemp = elem.style.opacity;
+      elem.style.opacity = 0.3;
     });
     elem.addEventListener("dragover", (e) => {
       const src = document.querySelector(".dragging");
@@ -138,8 +155,8 @@ log("PermForm.js");
     });
     elem.addEventListener("dragend", (e) => {
       elem.classList.remove("dragging");
-      elem.style.border = elem.borderTemp;
-      elem.style.borderWidth = elem.borderWidthTemp;
+      elem.style.backgroundColor = elem.bgTemp;
+      elem.style.opacity = elem.opTemp;
     });
   };
 
@@ -159,12 +176,39 @@ log("PermForm.js");
       basic: {
         formStyle: {
           fontSize: "20px",
-          fontFamily: "Roboto",
+          fontFamily: "Arial",
           gridColumnGap: "10px",
           gridRowGap: "10px",
           display: "grid",
           height: "100%",
           padding: "10px",
+        },
+        defaults: {
+          textLabel: {
+            type: "textLabel",
+            value: "Text Label",
+            size: "1,1",
+          },
+          textInput: {
+            type: "textInput",
+            placeholder: "Text Input",
+            size: "1,1",
+          },
+          fileInput: {
+            type: "fileInput",
+            name: "File Input",
+            size: "1,1",
+          },
+          dropDown: {
+            type: "dropDown",
+            name: "Drop Down",
+            options: ["Yes", "No"],
+            size: "1,1",
+          },
+          submit: {
+            type: "submit",
+            size: "1,1",
+          },
         },
         elements: {
           textLabel: (elemSpecs, state, setState, height) => {
@@ -178,9 +222,9 @@ log("PermForm.js");
             });
             return elem;
           },
-          textInput: (elemSpecs, state, setState, height) => {
+          textInput: (elemSpecs, state, setState, height = 1) => {
             const elem = document.createElement(
-              height == 1 ? "input" : "textArea"
+              height === 1 ? "input" : "textArea"
             );
             elem.placeholder = elemSpecs.placeholder;
             if (state) elem.value = state;
@@ -320,4 +364,5 @@ log("PermForm.js");
   };
 
   global.initForm = global.initForm || initForm;
+  global.initFormSimple = global.initFormSimple || initFormSimple;
 })(window);

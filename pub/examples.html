@@ -6,9 +6,21 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Jquery from a Google CDN.  
-    	 If you don't use either async or defer, the DOM load is blocked until the script is downloaded and executed. -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- CSS styling -->
+    <link rel="stylesheet" href="index.css" />
+
+    <!-- JSON editor -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.0.4/jsoneditor.min.css"
+      integrity="sha512-PWaHjZQo6KuaDHCDvl1WEePqV8hGiJc4vzec7iH7dIX67ql/s3S47xRBptJfHfcffENdIp/pMHKY7rfkiE3Osw=="
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.0.4/jsoneditor.min.js"
+      integrity="sha512-8ui6NfUrJH7tponbZd5Lai3dqToJ9x7rQQRqaNtdNuVdsuOkoTMEitV2jfRsJ3stEYjSsn8n+9nnvTv0i1hb7g=="
+      crossorigin="anonymous"
+    ></script>
 
     <!-- 'defer' says that the script should be loaded after the DOM is loaded.
          If multiple scripts have 'defer', they are loaded one after the other.  -->
@@ -20,23 +32,59 @@
     <script defer type="text/javascript" src="examples.js"></script>
   </head>
   <body>
-    <h1 style="font-family: Arial;">
-      PermForm.js Demo
-    </h1>
-    <p style="font-family: Arial;">
-      Here, we use PermForm.js to create a simple job application. By using
-      PermForm.js, we can create this form with a simple JSON string.</br>
-      The JSON for the form is on the left, and the rendered form is shown on the right.</br>
-      The key features of the form include: 
-      <ol style="font-family: Arial;">
-        <li>Automatic grid alignment (each element is defined using a coordinate system)</li>
-        <li>Auto save (close and reopen this tab, the form will save its state!)</li>
-        <li>Input validation (the phone number field is set to be numeric type, the email is validated to be an email, and all the fields are set to be required).</li>
-      </ol>
-    </p>
-    <div style="display: flex;">
-      <img src="code.png" style="width: 500px;">
-      <div id="formDiv" style="height: 400px;"></div>
+    <div id="container">
+      <div id="header">
+        <p class="blue">PermForm</p>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="examples.html">Examples</a></li>
+          <li><a href="docs.html">Docs</a></li>
+        </ul>
+      </div>
+      <div id="screen-min" class="screen"></div>
+      <div class="columns column-gap-big">
+        <div>
+          <p class="section-title">Autosave</p>
+          <p class="section-subtitle courier">autosave: true</p>
+          <div id="autosave-form"></div>
+        </div>
+        <div>
+          <p class="section-title">Drag-and-drop</p>
+          <p class="section-subtitle courier">draggable: true</p>
+          <div id="drag-form"></div>
+        </div>
+      </div>
+      <div class="columns column-gap-big">
+        <div>
+          <p class="section-title">Validation</p>
+          <p class="section-subtitle courier">validator: numeric/email</p>
+          <div id="validate-form"></div>
+        </div>
+        <div>
+          <p class="section-title">Simple</p>
+          <p class="section-subtitle courier">
+            initFormSimple("simple-form", [ <br />
+            "textLabel",<br />
+            "textInput",<br />
+            "fileInput",<br />
+            "dropDown",<br />
+            "submit",<br />
+            ]).buildForm();
+          </p>
+          <div id="simple-form"></div>
+        </div>
+      </div>
+      <p class="section-title title-gap-big">
+        Try it out yourself!
+      </p>
+      <div class="col-flex column-gap-big">
+        <div>
+          <div id="jsoneditor" class="editor"></div>
+        </div>
+        <div>
+          <div id="try-form"></div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

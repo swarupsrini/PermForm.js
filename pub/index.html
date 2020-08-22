@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>PermForm.js Demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Jquery from a Google CDN.  
+    	 If you don't use either async or defer, the DOM load is blocked until the script is downloaded and executed. -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+
+    <!-- CSS styling -->
+    <link rel="stylesheet" href="index.css" />
+
+    <!-- 'defer' says that the script should be loaded after the DOM is loaded.
+         If multiple scripts have 'defer', they are loaded one after the other.  -->
+    <!-- 'async' states that it is safe to load the script without blocking 
+          DOM loading.  Note that if multiple scripts are 'async', their order
+          of loading is not guaratneed (don't use async if one script depends
+          on the other). -->
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <p class="blue">PermForm</p>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="examples.html">Examples</a></li>
+          <li><a href="docs.html">Docs</a></li>
+        </ul>
+      </div>
+      <div id="screen-full" class="screen">
+        <p id="title" class="blue">PermForm.js</p>
+        <p id="subtitle">Your one stop shop for building seamless forms.</p>
+      </div>
+      <div class="columns column-gap-small">
+        <div>
+          <img
+            class="colImg colItem"
+            src="icons/icon-cube.svg"
+            alt="Bulb icon"
+          />
+          <p class="colTitle colItem">Simplicity</p>
+          <p class="colDesc colItem">
+            With just one line of code, you can produce a beautiful,
+            customizable, form which you can customize with ease to produce
+            complex forms to your liking.
+          </p>
+        </div>
+        <div>
+          <img
+            class="colImg colItem"
+            src="icons/icon-save.svg"
+            alt="Autosave icon"
+          />
+          <p class="colTitle colItem">Autosave</p>
+          <p class="colDesc colItem">
+            A simple true/false toggle to make your form automatically save the
+            state of each form element, and reloading when the user visits your
+            site the next time. Say goodbye to users losing their hard work to
+            input data!
+          </p>
+        </div>
+        <div>
+          <img
+            class="colImg colItem"
+            src="icons/icon-grid.svg"
+            alt="Grid icon"
+          />
+          <p class="colTitle colItem">Grid</p>
+          <p class="colDesc colItem">
+            Use the powerful grid system to nest your objects, and have PermForm
+            automatically place them in a grid according to your nested objects.
+            Modify where each element is located on the grid with ease!
+          </p>
+        </div>
+        <div>
+          <img
+            class="colImg colItem"
+            src="icons/icon-drag.svg"
+            alt="Drag icon"
+          />
+          <p class="colTitle colItem">Drag-and-drop</p>
+          <p class="colDesc colItem">
+            A state-of-the-art drag-and-drop system for all your rapid
+            development needs, you can play around with the design and export
+            the JSON schema of the form when you're done!
+          </p>
+        </div>
+        <div>
+          <img
+            class="colImg colItem"
+            src="icons/icon-check.svg"
+            alt="Drag icon"
+          />
+          <p class="colTitle colItem">Validation</p>
+          <p class="colDesc colItem">
+            With one small setting, PermForm automatically validates user input!
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

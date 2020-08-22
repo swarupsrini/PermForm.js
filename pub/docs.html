@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>PermForm.js Demo</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- CSS styling -->
+    <link rel="stylesheet" href="index.css" />
+
+    <!-- Syntax highlighter -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/tomorrow-night.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+    <script defer>
+      hljs.initHighlightingOnLoad();
+    </script>
+
+    <!-- 'defer' says that the script should be loaded after the DOM is loaded.
+         If multiple scripts have 'defer', they are loaded one after the other.  -->
+    <!-- 'async' states that it is safe to load the script without blocking 
+          DOM loading.  Note that if multiple scripts are 'async', their order
+          of loading is not guaratneed (don't use async if one script depends
+          on the other). -->
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <p class="blue">PermForm</p>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="examples.html">Examples</a></li>
+          <li><a href="docs.html">Docs</a></li>
+        </ul>
+      </div>
+      <div id="screen-min" class="screen"></div>
+      <p class="section-title-left title-gap">Getting Started</p>
+      <p class="section-subtitle-left">
+        In this page you will see a short overview to get started with PermForm
+        followed by a detailed API documentation.
+      </p>
+      <p class="section-subtitle1-left">
+        Installation
+      </p>
+      <div class="section-subtitle-left">
+        To use PermForm, you must first include the JavaScript file in the
+        &lt;head&gt; section of your web page:
+        <pre><code class="html">&lt;script defer type="text/javascript" src="PermForm.js"&gt;&lt;/script&gt;</code></pre>
+      </div>
+      <p class="section-subtitle1-left">
+        Sample code
+      </p>
+      <div class="section-subtitle-left">
+        A code snippet of some code that creates a form inside the div with ID
+        "simple-form" which must already exist on your page.
+        <pre><code class="javascript">initFormSimple("simple-form", ["textLabel","textInput","fileInput","dropDown","submit",]).buildForm();</code></pre>
+      </div>
+      <p class="section-title-left title-gap">Functions</p>
+      <p class="section-subtitle-left">
+        All the functions available once you include the PermForm library.
+      </p>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Arugments</th>
+          <th>Returned</th>
+          <th>Behavior</th>
+        </tr>
+        <tr>
+          <td>initFormSimple</td>
+          <td>divId, elements</td>
+          <td>PermForm object</td>
+          <td>
+            Creates a PermForm object. Elements must be an array of element
+            names. Look at the elements array API table for more details.
+          </td>
+        </tr>
+        <tr>
+          <td>initForm</td>
+          <td>specs</td>
+          <td>PermForm object</td>
+          <td>
+            Creates a PermForm object. Specs must be a Specs object with
+            specification options and an element array. Look at the specs API
+            table for more details.
+          </td>
+        </tr>
+      </table>
+      <p class="section-title-left title-gap">Methods</p>
+      <p class="section-subtitle-left">
+        All the methods you can call on a PermForm object.
+      </p>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Arugments</th>
+          <th>Returned</th>
+          <th>Behavior</th>
+        </tr>
+        <tr>
+          <td>buildForm</td>
+          <td></td>
+          <td></td>
+          <td>
+            Builds the form inside the div specified by divId in the specs given
+            to initialize the PermForm object. Uses properties in the specs
+            object to style the form. Looks through the elements array which
+            must contain element objects (see the elements array API table for
+            more details).
+          </td>
+        </tr>
+        <tr>
+          <td>rebuildForm</td>
+          <td>specs</td>
+          <td></td>
+          <td>
+            Updates the specs object of the PermForm object, removes the old
+            form build using buildForm (if any) and rebuilds a new form with the
+            new specs. Note, the divId in this specs is disregarded, and the old
+            div provided during initialization of the PermForm object will be
+            used.
+          </td>
+        </tr>
+        <tr>
+          <td>exportForm</td>
+          <td></td>
+          <td>Specs object</td>
+          <td>
+            Returns the specs object of the form. Used in conjunction with the
+            draggability function to style the form, and export it's JSON for
+            later use.
+          </td>
+        </tr>
+        <tr>
+          <td>exportState</td>
+          <td></td>
+          <td>array</td>
+          <td>
+            Returns an array of the current state of each element on the form
+            obtained via user input.
+          </td>
+        </tr>
+      </table>
+      <p class="section-title-left title-gap">Specs Object</p>
+      <p class="section-subtitle-left">
+        All the key-value pairs of a specs object. Any entry with a default
+        value of '-' indicates that the field has no default and is a required
+        key.
+      </p>
+      <table>
+        <tr>
+          <th>Key</th>
+          <th>Default</th>
+          <th>Type</th>
+          <th>Purpose</th>
+        </tr>
+        <tr>
+          <td>divId</td>
+          <td>-</td>
+          <td>String</td>
+          <td>
+            The ID of the div element the form must be built into. A div must
+            already exist with this ID, and must be positioned and sized as
+            wanted.
+          </td>
+        </tr>
+        <tr>
+          <td>autoSave</td>
+          <td>false</td>
+          <td>Boolean</td>
+          <td>
+            Whether or not to automatically save the state of each form element
+            persistently. With this enabled, whenever the user visits the site
+            again, the form elements are automatically filled in with the saved
+            information.
+          </td>
+        </tr>
+        <tr>
+          <td>draggable</td>
+          <td>false</td>
+          <td>Boolean</td>
+          <td>
+            Whether or not the form elements can be dragged around.
+          </td>
+        </tr>
+        <tr>
+          <td>theme</td>
+          <td>basic</td>
+          <td>String</td>
+          <td>
+            The theme of the form. Currently available themes: basic.
+          </td>
+        </tr>
+        <tr>
+          <td>columns</td>
+          <td>basic</td>
+          <td>Integer</td>
+          <td>
+            The number of columns of the form.
+          </td>
+        </tr>
+        <tr>
+          <td>elements</td>
+          <td>-</td>
+          <td>Array</td>
+          <td>
+            An array of element objects to be a part of the form. See the
+            elements array API table for more details.
+          </td>
+        </tr>
+        <tr>
+          <td>onSubmit</td>
+          <td>-</td>
+          <td>Callback</td>
+          <td>
+            A callback called when a user clicks the form element type 'submit'
+            on the form. An array of the current state of each form element is
+            passed as an argument.
+          </td>
+        </tr>
+      </table>
+      <p class="section-title-left title-gap">Elements Array</p>
+      <p class="section-subtitle-left">
+        A 2D array of element specification objects. Each index of this array is
+        an array and specifies a row in the form and each index in that row
+        array is a form element on the form. Each object in the element array is
+        an element specification object and details about this object is given
+        below. The common properties are listed below. <br />
+        The 'type' property corresponds to the 'Type' header in the table
+        below.<br />
+        The 'size' property of each object is a comma separated coordinate form,
+        with the horizontal and vertical sizes of the element.<br />
+        The 'required' property is a Boolean, and indicates whether or not a
+        field is required.
+      </p>
+      <table>
+        <tr>
+          <th>Type</th>
+          <th>Keys</th>
+          <th>Default</th>
+          <th>Behavior</th>
+        </tr>
+        <tr>
+          <td>textLabel</td>
+          <td>type, value, size</td>
+          <td class="courier">
+            type: "textLabel" <br />
+            value: "Text Label" <br />
+            size: "1,1"
+          </td>
+          <td>
+            A simple text label. Displays the text given by the value property.
+          </td>
+        </tr>
+        <tr>
+          <td>textInput</td>
+          <td>type, name, required, validator, size</td>
+          <td class="courier">
+            type: "textInput" <br />
+            placeholder: "Text Input" <br />
+            size: "1,1"
+          </td>
+          <td>
+            A simple text input box. Placeholder text is given by placeholder.
+            Provide a vertical sizing of > 1 for multiline input. Validator
+            indicates how to validate this input. Currently supported
+            validators: 'email', 'numeric'.
+          </td>
+        </tr>
+        <tr>
+          <td>fileInput</td>
+          <td>type, name, required, size</td>
+          <td class="courier">
+            type: "fileInput" <br />
+            name: "File Input" <br />
+            size: "1,1"
+          </td>
+          <td>
+            A file input object. Users must click on this object to select and
+            upload a file from the file selector window. Text displayed on the
+            file input object is given by the property name.
+          </td>
+        </tr>
+        <tr>
+          <td>dropDown</td>
+          <td>type, name, options, size</td>
+          <td class="courier">
+            type: "dropDown"<br />
+            name: "Drop Down"<br />
+            options: ["Yes", "No"]<br />
+            size: "1,1"
+          </td>
+          <td>
+            A drop down selection object. Text displayed on the object is given
+            by the property name. The propery options is an array of strings
+            corresponding to the available options for the user.
+          </td>
+        </tr>
+        <tr>
+          <td>submit</td>
+          <td>type, size</td>
+          <td class="courier">
+            type: "submit" <br />
+            size: "1,1"
+          </td>
+          <td>
+            A submission button. This calls the 'onSubmit' property of the form
+            specifications with an array of the states of each element on the
+            form.
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
